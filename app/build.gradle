@@ -1,0 +1,90 @@
+apply plugin: 'com.android.application'
+apply plugin: 'com.google.cloud.tools.endpoints-framework-client'
+
+buildscript {
+    repositories {
+        jcenter()
+    }
+    dependencies {
+        classpath 'com.google.cloud.tools:endpoints-framework-gradle-plugin:1.0.3'
+    }
+}
+
+android {
+    compileSdkVersion 28
+    buildToolsVersion "28.0.3"
+
+    defaultConfig {
+        applicationId "com.udacity.gradle.builditbigger"
+        minSdkVersion 23
+        targetSdkVersion 28
+        versionCode 1
+        versionName "1.0"
+        multiDexEnabled true
+
+        testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+    }
+
+    buildTypes {
+        release {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+        }
+    }
+
+    sourceSets {
+        free {
+            java.srcDirs = ['src/free/java']
+        }
+
+        paid {
+            java.srcDirs = ['src/paid/java']
+        }
+    }
+
+    // Specifies one flavor dimension.
+    flavorDimensions "version"
+
+    productFlavors {
+        free {
+            dimension "version"
+            applicationIdSuffix ".free"
+        }
+        paid {
+            dimension "version"
+            applicationIdSuffix ".paid"
+        }
+    }
+}
+
+configurations {
+    freeImplementation
+}
+
+dependencies {
+    implementation fileTree(dir: 'libs', include: ['*.jar'])
+    implementation 'androidx.constraintlayout:constraintlayout:1.1.3'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    endpointsServer project(path: ':backend', configuration: 'endpoints')
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    freeImplementation 'com.google.android.gms:play-services-ads:19.1.0'
+    implementation 'com.google.api-client:google-api-client:1.23.0'
+    implementation 'com.google.http-client:google-http-client-android:1.23.0'
+    implementation 'com.google.code.findbugs:jsr305:3.0.2'
+
+    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
+    androidTestImplementation('androidx.test.espresso:espresso-core:3.1.0', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+    })
+
+    androidTestImplementation 'androidx.test:runner:1.2.0'
+    androidTestImplementation 'androidx.test:rules:1.2.0'
+    androidTestImplementation 'org.hamcrest:hamcrest-library:1.3'
+
+    implementation project(':jokelib')
+    implementation project(':uilib')
+
+
+    testImplementation 'junit:junit:4.13'
+
+}
